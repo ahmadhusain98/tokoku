@@ -33,7 +33,7 @@
                                                         <label>Invoice</label>
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <input type="text" name="invoice" id="invoice" placeholder="AUTO" readonly class="form-control">
+                                                        <input type="text" name="invoice" id="invoice" value="<?= $header->invoice; ?>" placeholder="AUTO" readonly class="form-control">
                                                     </div>
                                                 </div>
                                             </div>
@@ -67,7 +67,10 @@
                                                         <label>Gudang <sup class="text-danger">*</sup></label>
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <select name="kode_gudang" id="kode_gudang" class="form-control select2_gudang" data-placeholder="Gudang" style="width: 100%;" onchange="get_barang(this.value)"></select>
+                                                        <select name="kode_gudang" id="kode_gudang" class="form-control select2_gudang" data-placeholder="Gudang" style="width: 100%;" onchange="get_barang(this.value)">
+                                                            <?php $gudang = $this->db->get_where("gudang", ["kode_gudang" => $header->kode_gudang])->row()->nama_gudang ?>
+                                                            <option value="<?= $header->kode_gudang ?>"><?= $gudang ?></option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -79,12 +82,17 @@
                                                     <div class="col-sm-9">
                                                         <div class="row">
                                                             <div class="col-sm-2" style="margin-bottom: 5px;">
-                                                                <input type="checkbox" name="cekppn" id="cekppn" class="form-control" onclick="ppncek(); total();">
-                                                                <input type="hidden" name="cek_ppn" id="cek_ppn" value="0">
+                                                                <input type="checkbox" name="cekppn" id="cekppn" class="form-control" onclick="ppncek(); total();" <?= ($header->pajak > 0) ? 'checked' : '' ?>>
+                                                                <input type="hidden" name="cek_ppn" id="cek_ppn" value="<?= $header->pajak ?>">
                                                             </div>
                                                             <div class="col-sm-10" id="c_ppn">
-                                                                <select name="id_ppn" id="id_ppn" class="form-control select2_ppn" data-placeholder="PPN" onchange="get_ppn(this.value)" style="width: 100%;"></select>
-                                                                <input type="hidden" name="kode_ppn" id="kode_ppn">
+                                                                <select name="id_ppn" id="id_ppn" class="form-control select2_ppn" data-placeholder="PPN" onchange="get_ppn(this.value)" style="width: 100%;">
+                                                                    <?php if ($header) : ?>
+                                                                        <?php $ppn = $this->db->get_where("ppn", ["id_ppn" => $header->ppn])->row()->nama_ppn ?>
+                                                                        <option value="<?= $header->ppn ?>"><?= $ppn ?></option>
+                                                                    <?php endif; ?>
+                                                                </select>
+                                                                <input type="hidden" name="kode_ppn" id="kode_ppn" value="<?= $header->ppn ?>">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -98,7 +106,14 @@
                                                         <label>Pembeli <sup class="text-danger">*</sup></label>
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <select name="kode_pembeli" id="kode_pembeli" class="form-control select2_pembeli" data-placeholder="Pembeli" style="width: 100%;" onchange="pembeli(this.value)"></select>
+                                                        <select name="kode_pembeli" id="kode_pembeli" class="form-control select2_pembeli" data-placeholder="Pembeli" style="width: 100%;" onchange="pembeli(this.value)">
+                                                            <?php if ($header->pembeli == "UMUM0001") : ?>
+                                                                <option value="<?= $header->pembeli ?>">UMUM</option>
+                                                            <?php else : ?>
+                                                                <?php $pembeli = $this->db->get_where("user", ["id_user" => $header->pembeli])->row() ?>
+                                                                <option value="<?= $header->pembeli ?>"><?= $pembeli->id_user . ' | ' . $pembeli->nama . ' | ' . $pembeli->nohp . ' | ' . $pembeli->alamat  ?></option>
+                                                            <?php endif; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -108,7 +123,29 @@
                                                         <label>Alamat</label>
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <textarea name="alamat" id="alamat" class="form-control" placeholder="Alamat AUTO" readonly></textarea>
+                                                        <?php if ($header->pembeli == "UMUM0001") {
+                                                            $alamat = '-';
+                                                        } else {
+                                                            $alamat = $pembeli->alamat;
+                                                        } ?>
+                                                        <textarea name="alamat" id="alamat" class="form-control" placeholder="Alamat AUTO" readonly><?= $alamat ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-6">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <label>Alasan <sup class="text-danger">*</sup></label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <?php if ($header->pembeli == "UMUM0001") {
+                                                            $alamat = '-';
+                                                        } else {
+                                                            $alamat = $pembeli->alamat;
+                                                        } ?>
+                                                        <textarea name="alasan" id="alasan" class="form-control" placeholder="Alasan Perubahan..."></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -144,37 +181,56 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="bodyTable">
-                                                        <tr id="tr_1">
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn btn-warning btn-flat" id="btnHapus1" name="btnHapus[]" onclick="hapusBaris(1)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
-                                                            </td>
-                                                            <td>
-                                                                <select name="kode_barang[]" id="kode_barang1" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarang(this.value, 1)"></select>
-                                                                <input type="hidden" name="nama_barang[]" id="nama_barang1" class="form-control" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="hidden" name="kode_satuan[]" id="kode_satuan1" class="form-control" readonly>
-                                                                <input type="text" name="satuan_barang[]" id="satuan_barang1" class="form-control" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="date" name="tgl_expire[]" id="tgl_expire1" class="form-control" value="<?= date('Y-m-d', strtotime('+2 Year')) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="qty_barang[]" id="qty_barang1" class="form-control text-right" onchange="totalline(1)" value="1" min="1">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="harga_barang[]" id="harga_barang1" class="form-control text-right" readonly value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="discpr_barang[]" id="discpr_barang1" class="form-control text-right" onchange="total_discpr(1)" value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="discrp_barang[]" id="discrp_barang1" class="form-control text-right" onchange="totalline(1)" value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="total_barang[]" id="total_barang1" class="form-control text-right" readonly value="0">
-                                                            </td>
-                                                        </tr>
+                                                        <?php $no = 1;
+                                                        foreach ($detail as $d) : ?>
+                                                            <tr id="tr_<?= $no ?>">
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-warning btn-flat" id="btnHapus<?= $no ?>" name="btnHapus[]" onclick="hapusBaris(<?= $no ?>)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
+                                                                </td>
+                                                                <td>
+                                                                    <?php
+                                                                    $data = $this->db->query(
+                                                                        "SELECT b.kode_barang AS id, CONCAT(b.nama_barang, ' | ', b.harga_jual, ' | ', SUM(s.saldo_akhir), ' | ', 'Expire: ', DATE_FORMAT(s.tgl_expire, '%Y-%m-%d')) AS text
+                                                                        FROM barang b
+                                                                        JOIN stok s ON b.kode_barang = s.kode_barang
+                                                                        WHERE (b.kode_cabang = '$cabang' AND s.kode_cabang = '$cabang') AND s.kode_gudang = '$header->kode_gudang'
+                                                                        AND b.kode_barang = '$d->kode_barang'
+                                                                        GROUP BY s.tgl_expire"
+                                                                    )->row();
+                                                                    ?>
+                                                                    <select name="kode_barang[]" id="kode_barang<?= $no ?>" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarang(this.value, <?= $no ?>)">
+                                                                        <option value="<?= $d->kode_barang ?>"><?= $data->text ?></option>
+                                                                    </select>
+                                                                    <input type="hidden" name="nama_barang[]" id="nama_barang<?= $no ?>" class="form-control" value="<?= $d->nama ?>" readonly>
+                                                                </td>
+                                                                <td>
+                                                                    <?php
+                                                                    $satuan = $this->db->get_where("satuan", ["kode_satuan" => $d->satuan])->row();
+                                                                    ?>
+                                                                    <input type="hidden" name="kode_satuan[]" id="kode_satuan<?= $no ?>" class="form-control" readonly value="<?= $d->satuan ?>">
+                                                                    <input type="text" name="satuan_barang[]" id="satuan_barang<?= $no ?>" class="form-control" readonly value="<?= $satuan->nama_satuan ?>">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="date" name="tgl_expire[]" id="tgl_expire<?= $no ?>" class="form-control" value="<?= date('Y-m-d', strtotime($d->tgl_expire)) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="qty_barang[]" id="qty_barang<?= $no ?>" class="form-control text-right" onchange="totalline(<?= $no ?>)" value="<?= $d->qty ?>" min="1">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="harga_barang[]" id="harga_barang<?= $no ?>" class="form-control text-right" readonly value="<?= number_format($d->harga); ?>">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="discpr_barang[]" id="discpr_barang<?= $no ?>" class="form-control text-right" onchange="total_discpr(<?= $no ?>)" value="<?= $d->disc_pr ?>">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="discrp_barang[]" id="discrp_barang<?= $no ?>" class="form-control text-right" onchange="totalline(<?= $no ?>)" value="<?= number_format($d->disc_rp) ?>">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="total_barang[]" id="total_barang<?= $no ?>" class="form-control text-right" readonly value="<?= number_format($d->total) ?>">
+                                                                </td>
+                                                            </tr>
+                                                        <?php $no++;
+                                                        endforeach; ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -184,7 +240,7 @@
                                         <div class="col-sm-8" style="margin-bottom: 5px;">
                                             <button type="button" class="btn btn-success btn-flat" id="btnTambah" onclick="tambah()" title="Tambah Baris"><i class="fa-solid fa-plus"></i></button>
                                             <button type="button" class="btn btn-danger btn-flat" id="btnHapusSemua" onclick="hapusSemua()" title="Hapus Semua Baris"><i class="fa-regular fa-trash-can"></i></button>
-                                            <button type="button" class="btn btn-primary btn-flat float-right" id="btnSimpan" onclick="simpan()" title="Simpan Data PO">Simpan <i class="fa-solid fa-save"></i></button>
+                                            <button type="button" class="btn btn-primary btn-flat float-right" id="btnSimpan" onclick="simpan()" title="Simpan Data PO">Update <i class="fa-solid fa-save"></i></button>
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="card border-danger">
@@ -238,18 +294,14 @@
 <script>
     $(document).ready(function() {
         var cabang = '<?= $cabang; ?>';
+        var gudang = $("#kode_gudang").val();
         initailizeSelect2_supplier(cabang);
         initailizeSelect2_gudang(cabang);
         initailizeSelect2_ppn();
         initailizeSelect2_pembeli();
-        initailizeSelect2_barang_jual(cabang, '');
-        $("#c_ppn").hide();
-        $("#sup_ppn").hide();
-        // $("#btnHapus1").attr("disabled", true);
-        // $("#kode_barang1").attr("disabled", true);
-        // $("#btnTambah").attr("disabled", true);
-        // $("#btnHapusSemua").attr("disabled", true);
-        $("#btnSimpan").attr("disabled", true);
+        initailizeSelect2_barang_jual(cabang, gudang);
+        total();
+        ppncek();
     });
 
     function get_barang(gudang) {
@@ -323,7 +375,7 @@
         });
     }
 
-    var idrow = 2;
+    var idrow = <?= count($detail) + 1 ?>;
 
     function tambah() {
         var table = $("#jual_detail");
@@ -471,6 +523,16 @@
             });
             return;
         }
+        var alasan = $("#alasan").val();
+        if (alasan == "" || alasan == null) {
+            $("#btnSimpan").attr("disabled", false);
+            Swal.fire({
+                icon: 'error',
+                title: 'ALASAN',
+                text: 'Tidak boleh kosong!',
+            });
+            return;
+        }
         if (document.getElementById("cekppn").checked == true) {
             var pajak = 1;
         } else {
@@ -499,7 +561,7 @@
             return;
         }
         $.ajax({
-            url: "<?= site_url('Penjualan_barang/simpan/1') ?>",
+            url: "<?= site_url('Penjualan_barang/simpan/2') ?>",
             type: "POST",
             data: ($('#form-jual').serialize()),
             dataType: "JSON",
@@ -508,14 +570,14 @@
                 if (data.status == 1) {
                     Swal.fire({
                         icon: 'success',
-                        html: '<span class="text-success h4 font-weight-bold">TAMBAH DATA JUAL</span><br><b>' + (data.invoice).toUpperCase() + '</b><br><br>Berhasil ditambahkan!',
+                        html: '<span class="text-success h4 font-weight-bold">UPDATE DATA JUAL</span><br><b>' + (data.invoice).toUpperCase() + '</b><br><br>Berhasil diupdate!',
                     }).then((result) => {
                         location.href = "<?= site_url('Penjualan_barang/jual'); ?>";
                     });
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        html: '<span class="text-danger h4 font-weight-bold">TAMBAH DATA JUAL</span><br><br>Gagal ditambahkan!',
+                        html: '<span class="text-danger h4 font-weight-bold">UPDATE DATA JUAL</span><br><br>Gagal diupdate!',
                     });
                 }
             }

@@ -162,6 +162,25 @@ class Penjualan_barang extends CI_Controller
         echo json_encode($barang);
     }
 
+    public function jual_edit($id)
+    {
+        $cabang = $this->session->userdata("cabang");
+        $user   = $this->db->get_where("user", ["username" => $this->session->userdata("username")])->row();
+        $header = $this->db->query("SELECT * FROM jual_barang_h WHERE id = '$id'")->row();
+        $detail = $this->db->query("SELECT * FROM jual_barang_d WHERE invoice = '$header->invoice'")->result();
+        $data   = [
+            "judul"     => "Tambah Data Penjualan",
+            "cabang"    => $cabang,
+            "user"      => $user,
+            "pesan"     => $this->db->query("SELECT * FROM pesan WHERE status = 0 GROUP BY isi")->result(),
+            "jumpesan"  => $this->db->query("SELECT * FROM pesan WHERE status = 0 GROUP BY isi")->num_rows(),
+            "teman"     => $this->db->query("SELECT * FROM user WHERE username != '$user->username'")->result(),
+            "header"    => $header,
+            "detail"    => $detail,
+        ];
+        $this->template->load('Template/Home', 'Penjualan_barang/Jual_edit', $data);
+    }
+
     public function simpan($par)
     {
         $tgl_jual    = $this->input->post("tgl_jual");
