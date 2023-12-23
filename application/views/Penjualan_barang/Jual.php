@@ -101,7 +101,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "<?= site_url('Penjualan_barang/hapus_jual/'); ?>" + id,
+                    url: "<?= site_url('Penjualan_barang/hapus_jual/'); ?>" + invoice,
                     type: "POST",
                     dataType: "JSON",
                     success: function(data) {

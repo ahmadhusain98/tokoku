@@ -98,7 +98,9 @@
                                                         <label>Pembeli <sup class="text-danger">*</sup></label>
                                                     </div>
                                                     <div class="col-sm-9">
-                                                        <select name="kode_pembeli" id="kode_pembeli" class="form-control select2_pembeli" data-placeholder="Pembeli" style="width: 100%;" onchange="pembeli(this.value)"></select>
+                                                        <select name="kode_pembeli" id="kode_pembeli" class="form-control select2_pembeli" data-placeholder="Pembeli" style="width: 100%;" onchange="pembeli(this.value)">
+                                                            <option value="UMUM0001">UMUM</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -118,7 +120,11 @@
                             </div>
                             <div class="card shadow border-danger">
                                 <div class="card-header">
-                                    <h3 class="card-title">Detail Data Jual</h3>
+                                    <h3 class="card-title">
+                                        <button class="btn btn-sm btn-danger" id="btnTab1" onclick="tab(1)" type="button">Detail Data Resep</button>
+                                        <button class="btn btn-sm btn-secondary" id="btnTab2" onclick="tab(2)" type="button">Detail Data Racik</button>
+                                        <button class="btn btn-sm btn-primary" id="btnTab3" onclick="tab(3)" type="button">Histori</button>
+                                    </h3>
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                                             <i class="fas fa-minus"></i>
@@ -126,99 +132,291 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
+                                    <div class="row" id="forTab1">
                                         <div class="col-sm-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-striped table-hover" id="jual_detail">
-                                                    <thead class="bg-danger">
-                                                        <tr class="text-center">
-                                                            <th style="width: 5%;">Hapus</th>
-                                                            <th style="width: 16%;">Barang</th>
-                                                            <th style="width: 10%;">Satuan</th>
-                                                            <th style="width: 10%;">Expire</th>
-                                                            <th style="width: 10%;">Qty</th>
-                                                            <th style="width: 10%;">Harga</th>
-                                                            <th style="width: 12%;">Disc (%)</th>
-                                                            <th style="width: 12%;">Disc (Rp)</th>
-                                                            <th style="width: 15%;">Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="bodyTable">
-                                                        <tr id="tr_1">
-                                                            <td class="text-center">
-                                                                <button type="button" class="btn btn-warning btn-flat" id="btnHapus1" name="btnHapus[]" onclick="hapusBaris(1)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
-                                                            </td>
-                                                            <td>
-                                                                <select name="kode_barang[]" id="kode_barang1" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarang(this.value, 1)"></select>
-                                                                <input type="hidden" name="nama_barang[]" id="nama_barang1" class="form-control" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="hidden" name="kode_satuan[]" id="kode_satuan1" class="form-control" readonly>
-                                                                <input type="text" name="satuan_barang[]" id="satuan_barang1" class="form-control" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="date" name="tgl_expire[]" id="tgl_expire1" class="form-control" value="<?= date('Y-m-d', strtotime('+2 Year')) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>" readonly>
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="qty_barang[]" id="qty_barang1" class="form-control text-right" onchange="totalline(1)" value="1" min="1">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="harga_barang[]" id="harga_barang1" class="form-control text-right" readonly value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="discpr_barang[]" id="discpr_barang1" class="form-control text-right" onchange="total_discpr(1)" value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="discrp_barang[]" id="discrp_barang1" class="form-control text-right" onchange="totalline(1)" value="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" name="total_barang[]" id="total_barang1" class="form-control text-right" readonly value="0">
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-hover" id="jual_detail">
+                                                            <thead class="bg-danger">
+                                                                <tr class="text-center">
+                                                                    <th style="width: 5%;">Hapus</th>
+                                                                    <th style="width: 16%;">Barang</th>
+                                                                    <th style="width: 10%;">Satuan</th>
+                                                                    <th style="width: 10%;">Expire</th>
+                                                                    <th style="width: 10%;">Qty</th>
+                                                                    <th style="width: 10%;">Harga</th>
+                                                                    <th style="width: 12%;">Disc (%)</th>
+                                                                    <th style="width: 12%;">Disc (Rp)</th>
+                                                                    <th style="width: 15%;">Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bodyTable">
+                                                                <tr id="tr_1">
+                                                                    <td class="text-center">
+                                                                        <button type="button" class="btn btn-warning btn-flat" id="btnHapus1" name="btnHapus[]" onclick="hapusBaris(1)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select name="kode_barang[]" id="kode_barang1" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarang(this.value, 1)"></select>
+                                                                        <input type="hidden" name="nama_barang[]" id="nama_barang1" class="form-control" readonly>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="kode_satuan[]" id="kode_satuan1" class="form-control" readonly>
+                                                                        <input type="text" name="satuan_barang[]" id="satuan_barang1" class="form-control" readonly>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="date" name="tgl_expire[]" id="tgl_expire1" class="form-control" value="<?= date('Y-m-d', strtotime('+2 Year')) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>" readonly>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="qty_barang[]" id="qty_barang1" class="form-control text-right" onchange="totalline(1)" value="1" min="1">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="harga_barang[]" id="harga_barang1" class="form-control text-right" readonly value="0">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="discpr_barang[]" id="discpr_barang1" class="form-control text-right" onchange="total_discpr(1)" value="0">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="discrp_barang[]" id="discrp_barang1" class="form-control text-right" onchange="totalline(1)" value="0">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="total_barang[]" id="total_barang1" class="form-control text-right" readonly value="0">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-8" style="margin-bottom: 5px;">
+                                                    <button type="button" class="btn btn-success btn-flat" id="btnTambah" onclick="tambah()" title="Tambah Baris"><i class="fa-solid fa-plus"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-flat" id="btnHapusSemua" onclick="hapusSemua()" title="Hapus Semua Baris"><i class="fa-regular fa-trash-can"></i></button>
+                                                    <button type="button" class="btn btn-primary btn-flat float-right" id="btnSimpan" onclick="simpan()" title="Simpan Data Resep">Simpan <i class="fa-solid fa-save"></i></button>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="card border-danger">
+                                                        <div class="card-body">
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-3">
+                                                                    <label>Subtotal</label>
+                                                                </div>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" class="form-control flat text-right" name="sub_total" id="sub_total" value="0" readonly>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-3">
+                                                                    <label>Diskon</label>
+                                                                </div>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" class="form-control flat text-right" name="diskon" id="diskon" value="0" readonly>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-3">
+                                                                    <label>PPN</label>
+                                                                </div>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" class="form-control flat text-right" name="ppn_rp" id="ppn_rp" value="0" readonly>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-3">
+                                                                    <label>Total</label>
+                                                                </div>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" class="form-control flat text-right" name="total_semua" id="total_semua" value="0" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-sm-8" style="margin-bottom: 5px;">
-                                            <button type="button" class="btn btn-success btn-flat" id="btnTambah" onclick="tambah()" title="Tambah Baris"><i class="fa-solid fa-plus"></i></button>
-                                            <button type="button" class="btn btn-danger btn-flat" id="btnHapusSemua" onclick="hapusSemua()" title="Hapus Semua Baris"><i class="fa-regular fa-trash-can"></i></button>
-                                            <button type="button" class="btn btn-primary btn-flat float-right" id="btnSimpan" onclick="simpan()" title="Simpan Data PO">Simpan <i class="fa-solid fa-save"></i></button>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="card border-danger">
-                                                <div class="card-body">
-                                                    <div class="row mb-3">
-                                                        <div class="col-sm-3">
-                                                            <label>Subtotal</label>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" class="form-control flat text-right" name="sub_total" id="sub_total" value="0" readonly>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-sm-3">
-                                                            <label>Diskon</label>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" class="form-control flat text-right" name="diskon" id="diskon" value="0" readonly>
+                                    <div class="row" id="forTab2">
+                                        <div class="col-sm-12">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-12">
+                                                    <div class="card shadow-lg">
+                                                        <div class="card-body text-center" style="height: auto;">
+                                                            <button class="btn btn-sm btn-danger" id="btnRacik1" onclick="showRacik(1)" type="button">Racik 1</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik2" onclick="showRacik(2)" type="button">Racik 2</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik3" onclick="showRacik(3)" type="button">Racik 3</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik4" onclick="showRacik(4)" type="button">Racik 4</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik5" onclick="showRacik(5)" type="button">Racik 5</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik6" onclick="showRacik(6)" type="button">Racik 6</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik7" onclick="showRacik(7)" type="button">Racik 7</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik8" onclick="showRacik(8)" type="button">Racik 8</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik9" onclick="showRacik(9)" type="button">Racik 9</button>
+                                                            <button class="btn btn-sm btn-secondary" id="btnRacik10" onclick="showRacik(10)" type="button">Racik 10</button>
                                                         </div>
                                                     </div>
-                                                    <div class="row mb-3">
-                                                        <div class="col-sm-3">
-                                                            <label>PPN</label>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" class="form-control flat text-right" name="ppn_rp" id="ppn_rp" value="0" readonly>
-                                                        </div>
-                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="Racik1">
+                                                <div class="col-sm-12">
                                                     <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <label>Total</label>
+                                                        <div class="col-sm-12">
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Nama</label>
+                                                                        <div class="col-sm-9">
+                                                                            <input type="text" name="namaRacik1" id="namaRacik1" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Jumlah</label>
+                                                                        <div class="col-sm-9">
+                                                                            <input type="number" name="qtyRacik1" id="qtyRacik1" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Kemasan</label>
+                                                                        <div class="col-sm-9">
+                                                                            <input type="text" name="kemasanRacik1" id="kemasanRacik1" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Aturan Pakai</label>
+                                                                        <div class="col-sm-9">
+                                                                            <input type="text" name="aturanRacik1" id="aturanRacik1" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Nama Dokter</label>
+                                                                        <div class="col-sm-9">
+                                                                            <input type="text" name="dokter" id="dokter" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="row">
+                                                                        <label class="control-label col-sm-3">Catatan Dokter</label>
+                                                                        <div class="col-sm-9">
+                                                                            <textarea name="note_dokter" id="note_dokter" class="form-control"></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" class="form-control flat text-right" name="total_semua" id="total_semua" value="0" readonly>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-striped table-hover" id="jualr1_detail">
+                                                                            <thead class="bg-danger">
+                                                                                <tr class="text-center">
+                                                                                    <th style="width: 5%;">Hapus</th>
+                                                                                    <th style="width: 16%;">Barang</th>
+                                                                                    <th style="width: 10%;">Satuan</th>
+                                                                                    <th style="width: 10%;">Expire</th>
+                                                                                    <th style="width: 10%;">Qty</th>
+                                                                                    <th style="width: 10%;">Harga</th>
+                                                                                    <th style="width: 12%;">Disc (%)</th>
+                                                                                    <th style="width: 12%;">Disc (Rp)</th>
+                                                                                    <th style="width: 15%;">Total</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="bodyTable">
+                                                                                <tr id="tr_1">
+                                                                                    <td class="text-center">
+                                                                                        <button type="button" class="btn btn-warning btn-flat" id="btnHapusr1_1" name="btnHapusr1_[]" onclick="hapusBarisr1_(1)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <select name="kode_barangr1_[]" id="kode_barangr1_1" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarangr1_(this.value, 1)"></select>
+                                                                                        <input type="hidden" name="nama_barangr1_[]" id="nama_barangr1_1" class="form-control" readonly>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="hidden" name="kode_satuanr1_[]" id="kode_satuanr1_1" class="form-control" readonly>
+                                                                                        <input type="text" name="satuan_barangr1_[]" id="satuan_barangr1_1" class="form-control" readonly>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="date" name="tgl_expirer1_[]" id="tgl_expirer1_1" class="form-control" value="<?= date('Y-m-d', strtotime('+2 Year')) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>" readonly>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" name="qty_barangr1_[]" id="qty_barangr1_1" class="form-control text-right" onchange="totalliner1_(1)" value="1" min="1">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" name="harga_barangr1_[]" id="harga_barangr1_1" class="form-control text-right" readonly value="0">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" name="discpr_barangr1_[]" id="discpr_barangr1_1" class="form-control text-right" onchange="total_discprr1_(1)" value="0">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" name="discrp_barangr1_[]" id="discrp_barangr1_1" class="form-control text-right" onchange="totalliner1_(1)" value="0">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="text" name="total_barangr1_[]" id="total_barangr1_1" class="form-control text-right" readonly value="0">
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-7" style="margin-bottom: 5px;">
+                                                                    <button type="button" class="btn btn-success btn-flat" id="btnTambahr1_" onclick="tambahr1_()" title="Tambah Baris"><i class="fa-solid fa-plus"></i></button>
+                                                                    <button type="button" class="btn btn-danger btn-flat" id="btnHapusSemuar1_" onclick="hapusSemuar1_()" title="Hapus Semua Baris"><i class="fa-regular fa-trash-can"></i></button>
+                                                                    <button type="button" class="btn btn-primary btn-flat float-right" id="btnSimpanr1_" onclick="simpanr1_()" title="Simpan Data Racik">Simpan <i class="fa-solid fa-save"></i></button>
+                                                                </div>
+                                                                <div class="col-sm-5">
+                                                                    <div class="card border-danger">
+                                                                        <div class="card-body">
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-sm-3">
+                                                                                    <label>Subtotal</label>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <input type="text" class="form-control flat text-right" name="sub_total" id="sub_total" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-sm-3">
+                                                                                    <label>Diskon</label>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <input type="text" class="form-control flat text-right" name="diskon" id="diskon" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-sm-3">
+                                                                                    <label>PPN</label>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <input type="text" class="form-control flat text-right" name="ppn_rp" id="ppn_rp" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-3">
+                                                                                    <label>Total</label>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <input type="text" class="form-control flat text-right" name="total_semua" id="total_semua" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -245,12 +443,59 @@
         initailizeSelect2_barang_jual(cabang, '');
         $("#c_ppn").hide();
         $("#sup_ppn").hide();
-        // $("#btnHapus1").attr("disabled", true);
-        // $("#kode_barang1").attr("disabled", true);
-        // $("#btnTambah").attr("disabled", true);
-        // $("#btnHapusSemua").attr("disabled", true);
+        pembeli("UMUM0001")
+        tab(2);
+        showRacik(1);
+        $("#btnHapus1").attr("disabled", true);
+        $("#kode_barang1").attr("disabled", true);
+        $("#btnTambah").attr("disabled", true);
+        $("#btnHapusSemua").attr("disabled", true);
         $("#btnSimpan").attr("disabled", true);
     });
+
+    function showRacik(par) {
+        for (var i = 1; i <= 11; i++) {
+            if (i == par) {
+                $("#btnRacik" + par).removeClass("btn-secondary");
+                $("#btnRacik" + par).addClass("btn-danger");
+
+                $("#btnRacik" + i).removeClass("btn-danger");
+                $("#btnRacik" + i).addClass("btn-secondary");
+
+                $("#Racik" + i).hide()
+                $("#Racik" + par).show()
+            } else {
+                $("#btnRacik" + par).removeClass("btn-secondary");
+                $("#btnRacik" + par).addClass("btn-danger");
+
+                $("#btnRacik" + i).removeClass("btn-danger");
+                $("#btnRacik" + i).addClass("btn-secondary");
+
+                $("#Racik" + i).hide()
+                $("#Racik" + par).show()
+            }
+        }
+    }
+
+    function tab(par) {
+        if (par == 1) {
+            $("#btnTab1").removeClass("btn-secondary");
+            $("#btnTab1").addClass("btn-danger");
+            $("#forTab1").show();
+
+            $("#btnTab2").removeClass("btn-danger");
+            $("#btnTab2").addClass("btn-secondary");
+            $("#forTab2").hide();
+        } else {
+            $("#btnTab1").removeClass("btn-danger");
+            $("#btnTab1").addClass("btn-secondary");
+            $("#forTab1").hide();
+
+            $("#btnTab2").removeClass("btn-secondary");
+            $("#btnTab2").addClass("btn-danger");
+            $("#forTab2").show();
+        }
+    }
 
     function get_barang(gudang) {
         var cabang = '<?= $cabang; ?>';

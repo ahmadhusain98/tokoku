@@ -184,7 +184,7 @@ class Penjualan_barang extends CI_Controller
     public function simpan($par)
     {
         $tgl_jual    = $this->input->post("tgl_jual");
-        $cabang           = $this->session->userdata("cabang");
+        $cabang      = $this->session->userdata("cabang");
         if ($par == 1) {
             $invoice = $this->M_core->inv_jual($cabang, $tgl_jual);
         } else {
@@ -246,6 +246,13 @@ class Penjualan_barang extends CI_Controller
                 'menu'      => "Pembelian Barang Jual",
             ];
             $this->db->insert("activity_user", $aktifitas);
+
+            $header = $this->db->get_where("jual_barang_h", ["invoice" => $invoice])->row();
+            $detail = $this->db->get_where("jual_barang_d", ["invoice" => $invoice])->result();
+
+            foreach ($detail as $d) {
+                $this->db->query("UPDATE stok SET keluar = keluar - $d->qty, saldo_akhir = saldo_akhir + $d->qty WHERE kode_cabang = '$header->kode_cabang' AND kode_gudang = '$header->kode_gudang' AND tgl_expire = '$d->tgl_expire' AND kode_barang = '$d->kode_barang'");
+            }
             $this->db->query("DELETE FROM jual_barang_d WHERE invoice = '$invoice'");
             $this->db->query("DELETE FROM jual_barang_h WHERE invoice = '$invoice'");
         } else {
@@ -291,9 +298,36 @@ class Penjualan_barang extends CI_Controller
                 "total"       => $_total_barang,
             ];
             if ($cek) {
+                $this->db->query("UPDATE stok SET keluar = keluar + $_qty_barang, saldo_akhir = saldo_akhir - $_qty_barang WHERE kode_cabang = '$cabang' AND kode_gudang = '$kode_gudang' AND tgl_expire = '$_tgl_expire' AND kode_barang = '$_kode_barang'");
+
                 $this->db->insert("jual_barang_d", $data_d);
             }
         }
         echo json_encode(["status" => 1, "invoice" => $invoice]);
+    }
+
+    public function hapus_jual($invoice)
+    {
+        $header = $this->db->get_where("jual_barang_h", ["invoice" => $invoice])->row();
+        $detail = $this->db->get_where("jual_barang_d", ["invoice" => $invoice])->result();
+
+        foreach ($detail as $d) {
+            // $this->db->query("UPDATE stok SET keluar = keluar - $d->qty, saldo_akhir = saldo_akhir + $d->qty WHERE kode_cabang = '$header->kode_cabang' AND kode_gudang = '$header->kode_gudang' AND tgl_expire = '$d->tgl_expire' AND kode_barang = '$d->kode_barang'");
+        }
+
+        $data = [
+            $this->db->delete("jual_barang_h", ["invoice" => $invoice]),
+            $this->db->delete("jual_barang_d", ["invoice" => $invoice]),
+        ];
+
+        if ($data) {
+            echo json_encode(["status" => 1]);
+        } else {
+            echo json_encode(["status" => 0]);
+        }
+    }
+
+    public function jual_cetak($invoice)
+    {
     }
 }
