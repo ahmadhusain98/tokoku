@@ -246,11 +246,6 @@
                                                             <button class="btn btn-sm btn-secondary" id="btnRacik3" onclick="showRacik(3)" type="button">Racik 3</button>
                                                             <button class="btn btn-sm btn-secondary" id="btnRacik4" onclick="showRacik(4)" type="button">Racik 4</button>
                                                             <button class="btn btn-sm btn-secondary" id="btnRacik5" onclick="showRacik(5)" type="button">Racik 5</button>
-                                                            <button class="btn btn-sm btn-secondary" id="btnRacik6" onclick="showRacik(6)" type="button">Racik 6</button>
-                                                            <button class="btn btn-sm btn-secondary" id="btnRacik7" onclick="showRacik(7)" type="button">Racik 7</button>
-                                                            <button class="btn btn-sm btn-secondary" id="btnRacik8" onclick="showRacik(8)" type="button">Racik 8</button>
-                                                            <button class="btn btn-sm btn-secondary" id="btnRacik9" onclick="showRacik(9)" type="button">Racik 9</button>
-                                                            <button class="btn btn-sm btn-secondary" id="btnRacik10" onclick="showRacik(10)" type="button">Racik 10</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -262,7 +257,7 @@
                                                             <div class="row mb-3">
                                                                 <div class="col-sm-6">
                                                                     <div class="row">
-                                                                        <label class="control-label col-sm-3">Nama</label>
+                                                                        <label class="control-label col-sm-3">Nama <sup class="text-danger">*</sup></label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" name="namaRacik1" id="namaRacik1" class="form-control">
                                                                         </div>
@@ -270,9 +265,9 @@
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <div class="row">
-                                                                        <label class="control-label col-sm-3">Jumlah</label>
+                                                                        <label class="control-label col-sm-3">Jumlah <sup class="text-danger">*</sup></label>
                                                                         <div class="col-sm-9">
-                                                                            <input type="number" name="qtyRacik1" id="qtyRacik1" class="form-control">
+                                                                            <input type="number" name="qtyRacik1" id="qtyRacik1" class="form-control" value="1" min="1">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -288,7 +283,7 @@
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <div class="row">
-                                                                        <label class="control-label col-sm-3">Aturan Pakai</label>
+                                                                        <label class="control-label col-sm-3">Pemakaian <sup class="text-danger">*</sup></label>
                                                                         <div class="col-sm-9">
                                                                             <input type="text" name="aturanRacik1" id="aturanRacik1" class="form-control" placeholder="example: 3 x 1 Sehari...">
                                                                         </div>
@@ -454,7 +449,7 @@
     });
 
     function showRacik(par) {
-        for (var i = 1; i <= 11; i++) {
+        for (var i = 1; i <= 6; i++) {
             if (i == par) {
                 $("#btnRacik" + par).removeClass("btn-secondary");
                 $("#btnRacik" + par).addClass("btn-danger");
