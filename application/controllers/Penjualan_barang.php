@@ -312,7 +312,7 @@ class Penjualan_barang extends CI_Controller
         $detail = $this->db->get_where("jual_barang_d", ["invoice" => $invoice])->result();
 
         foreach ($detail as $d) {
-            // $this->db->query("UPDATE stok SET keluar = keluar - $d->qty, saldo_akhir = saldo_akhir + $d->qty WHERE kode_cabang = '$header->kode_cabang' AND kode_gudang = '$header->kode_gudang' AND tgl_expire = '$d->tgl_expire' AND kode_barang = '$d->kode_barang'");
+            $this->db->query("UPDATE stok SET keluar = keluar - $d->qty, saldo_akhir = saldo_akhir + $d->qty WHERE kode_cabang = '$header->kode_cabang' AND kode_gudang = '$header->kode_gudang' AND tgl_expire = '$d->tgl_expire' AND kode_barang = '$d->kode_barang'");
         }
 
         $data = [
