@@ -290,7 +290,7 @@
                                                                     <div class="row">
                                                                         <label class="control-label col-sm-3">Aturan Pakai</label>
                                                                         <div class="col-sm-9">
-                                                                            <input type="text" name="aturanRacik1" id="aturanRacik1" class="form-control">
+                                                                            <input type="text" name="aturanRacik1" id="aturanRacik1" class="form-control" placeholder="example: 3 x 1 Sehari...">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -335,8 +335,8 @@
                                                                                     <th style="width: 15%;">Total</th>
                                                                                 </tr>
                                                                             </thead>
-                                                                            <tbody id="bodyTable">
-                                                                                <tr id="tr_1">
+                                                                            <tbody id="bodyTabler1">
+                                                                                <tr id="trr_1">
                                                                                     <td class="text-center">
                                                                                         <button type="button" class="btn btn-warning btn-flat" id="btnHapusr1_1" name="btnHapusr1_[]" onclick="hapusBarisr1_(1)" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
                                                                                     </td>
@@ -386,7 +386,7 @@
                                                                                     <label>Subtotal</label>
                                                                                 </div>
                                                                                 <div class="col-sm-9">
-                                                                                    <input type="text" class="form-control flat text-right" name="sub_total" id="sub_total" value="0" readonly>
+                                                                                    <input type="text" class="form-control flat text-right" name="sub_totalr1_" id="sub_totalr1_" value="0" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -394,7 +394,7 @@
                                                                                     <label>Diskon</label>
                                                                                 </div>
                                                                                 <div class="col-sm-9">
-                                                                                    <input type="text" class="form-control flat text-right" name="diskon" id="diskon" value="0" readonly>
+                                                                                    <input type="text" class="form-control flat text-right" name="diskonr1_" id="diskonr1_" value="0" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -402,7 +402,7 @@
                                                                                     <label>PPN</label>
                                                                                 </div>
                                                                                 <div class="col-sm-9">
-                                                                                    <input type="text" class="form-control flat text-right" name="ppn_rp" id="ppn_rp" value="0" readonly>
+                                                                                    <input type="text" class="form-control flat text-right" name="ppn_rpr1_" id="ppn_rpr1_" value="0" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
@@ -410,7 +410,7 @@
                                                                                     <label>Total</label>
                                                                                 </div>
                                                                                 <div class="col-sm-9">
-                                                                                    <input type="text" class="form-control flat text-right" name="total_semua" id="total_semua" value="0" readonly>
+                                                                                    <input type="text" class="form-control flat text-right" name="total_semuar1_" id="total_semuar1_" value="0" readonly>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -526,6 +526,7 @@
             success: function(data) {
                 $("#kode_ppn").val(data);
                 total();
+                totalr1_();
             }
         });
     }
@@ -699,6 +700,160 @@
             $("#btnSimpan").attr("disabled", true);
         } else {
             $("#btnSimpan").attr("disabled", false);
+        }
+    }
+</script>
+
+<!-- racikan -->
+<script>
+    function showbarangr1_(kode, id) {
+        var gudang = $("#kode_gudang").val();
+        $.ajax({
+            url: "<?= site_url('Penjualan_barang/get_barang/'); ?>" + kode + "?gudang=" + gudang,
+            type: "POST",
+            dataType: "JSON",
+            success: function(data) {
+                $("#nama_barangr1_" + id).val(data.nama_barang);
+                $("#tgl_expirer1_" + id).val(data.tgl_expire);
+                $("#kode_satuanr1_" + id).val(data.kode_satuan);
+                $("#satuan_barangr1_" + id).val(data.nama_satuan);
+                $("#harga_barangr1_" + id).val(formatRupiah(data.harga_jual));
+                totalliner1_(id);
+            }
+        });
+    }
+
+    var idrowr_ = 2;
+
+    function tambahr1_() {
+        var table = $("#jualr1_detail");
+        table.append(`<tr id="trr_${idrowr_}">
+            <td class="text-center">
+                <button type="button" class="btn btn-warning btn-flat" id="btnHapusr_${idrowr_}" name="btnHapusr1_[]" onclick="hapusBarisr1_(${idrowr_})" title="Hapus Baris"><i class="fa-solid fa-eraser"></i></button>
+            </td>
+            <td>
+                <select name="kode_barangr1_[]" id="kode_barangr1_${idrowr_}" class="form-control select2_barang_jual" data-placeholder="Cari Barang" onchange="showbarangr1_(this.value, ${idrowr_})"></select>
+                <input type="hidden" name="nama_barangr1_[]" id="nama_barangr1_${idrowr_}" class="form-control" readonly>
+            </td>
+            <td>
+                <input type="hidden" name="kode_satuanr1_[]" id="kode_satuanr1_${idrowr_}" class="form-control" readonly>
+                <input type="text" name="satuan_barangr1_[]" id="satuan_barangr1_${idrowr_}" class="form-control" readonly>
+            </td>
+            <td>
+                <input type="date" name="tgl_expirer1_[]" id="tgl_expirer1_${idrowr_}" class="form-control" value="<?= date('Y-m-d', strtotime('+2 Year')) ?>" min="<?= date('Y-m-d', strtotime('+2 Year')) ?>" readonly>
+            </td>
+            <td>
+                <input type="text" name="qty_barangr1_[]" id="qty_barangr1_${idrowr_}" class="form-control text-right" onchange="totalliner1_(${idrowr_})" value="1" min="1">
+            </td>
+            <td>
+                <input type="text" name="harga_barangr1_[]" id="harga_barangr1_${idrowr_}" class="form-control text-right" readonly value="0">
+            </td>
+            <td>
+                <input type="text" name="discpr_barangr1_[]" id="discpr_barangr1_${idrowr_}" class="form-control text-right" onchange="total_discprr1_(${idrowr_})" value="0">
+            </td>
+            <td>
+                <input type="text" name="discrp_barangr1_[]" id="discrp_barangr1_${idrowr_}" class="form-control text-right" onchange="totalliner1_(${idrowr_})" value="0">
+            </td>
+            <td>
+                <input type="text" name="total_barangr1_[]" id="total_barangr1_${idrowr_}" class="form-control text-right" readonly value="0">
+            </td>
+        </tr>`);
+        var cabang = '<?= $cabang; ?>';
+        var gudang = $("#kode_gudang").val()
+        initailizeSelect2_supplier(cabang);
+        initailizeSelect2_gudang(cabang);
+        initailizeSelect2_ppn();
+        initailizeSelect2_pembeli();
+        initailizeSelect2_barang_jual(cabang, gudang);
+        idrowr_++;
+    }
+
+    function hapusBarisr1_(param) {
+        $("#trr_" + param).remove();
+        totalr1_();
+    }
+
+    function hapusSemuar1_() {
+        $("#bodyTabler1").empty();
+        tambahr1_();
+        totalr1_();
+    }
+
+    function totalliner1_(id) {
+        var qty_ = $("#qty_barangr1_" + id).val();
+        var qty = Number(parseInt(qty_.replaceAll(",", "")));
+        var harga_ = $("#harga_barangr1_" + id).val();
+        var harga = Number(parseInt(harga_.replaceAll(",", "")));
+        var discpr_ = $("#discpr_barangr1_" + id).val();
+        var discpr = Number(parseInt(discpr_.replaceAll(",", "")));
+        var discrp_ = $("#discrp_barangr1_" + id).val();
+        var discrp = Number(parseInt(discrp_.replaceAll(",", "")));
+        var total_barang = qty * harga - discrp;
+        $("#discpr_barangr1_" + id).val(formatRupiah(0));
+        $("#discrp_barangr1_" + id).val(formatRupiah(discrp));
+        $("#qty_barangr1_" + id).val(formatRupiah(qty));
+        $("#total_barangr1_" + id).val(formatRupiah(total_barang));
+        totalr1_();
+    }
+
+    function total_discprr1_(id) {
+        var qty_ = $("#qty_barangr1_" + id).val();
+        var qty = Number(parseInt(qty_.replaceAll(",", "")));
+        var harga_ = $("#harga_barangr1_" + id).val();
+        var harga = Number(parseInt(harga_.replaceAll(",", "")));
+        var discpr_ = $("#discpr_barangr1_" + id).val();
+        var discpr = Number(parseInt(discpr_.replaceAll(",", "")));
+        if (discpr > 100) {
+            dis = 100;
+        } else {
+            dis = discpr;
+        }
+        var discrp = (qty * harga) * (discpr / 100);
+        var total_barang = (qty * harga) - discrp;
+        $("#discpr_barangr1_" + id).val(formatRupiah(dis));
+        $("#discrp_barangr1_" + id).val(formatRupiah(discrp));
+        $("#qty_barangr1_" + id).val(formatRupiah(qty));
+        $("#total_barangr1_" + id).val(formatRupiah(total_barang));
+        totalr1_();
+    }
+
+    function totalr1_() {
+        var ppn = $("#cek_ppn").val();
+        if (ppn > 0) {
+            var cekppn = $("#kode_ppn").val();
+            if (cekppn == "" || cekppn == null) {
+                var pajak = 0;
+            } else {
+                var pajak = $("#kode_ppn").val();
+            }
+        } else {
+            var pajak = 0;
+        }
+        var table = document.getElementById("jualr1_detail");
+        var rowCount = table.rows.length;
+        var sub_total = 0;
+        var sub_diskon = 0;
+        var kena_pajak = 0;
+        for (var i = 1; i < rowCount; i++) {
+            var row = table.rows[i];
+            var total_barang_ = row.cells[8].children[0].value;
+            var total_barang = Number(total_barang_.replace(/[^0-9\.]+/g, ""));
+            var discrp_barang_ = row.cells[7].children[0].value;
+            var discrp_barang = Number(discrp_barang_.replace(/[^0-9\.]+/g, ""));
+            sub_diskon += discrp_barang;
+            sub_total += (total_barang + discrp_barang);
+            kena_pajak += (total_barang * (pajak / 100));
+        }
+        var total_semua = ((sub_total - sub_diskon) + kena_pajak);
+        $("#sub_totalr1_").val(formatRupiah(sub_total.toFixed(0)));
+        $("#diskonr1_").val(formatRupiah(sub_diskon.toFixed(0)));
+        $("#ppn_rpr1_").val(formatRupiah(kena_pajak.toFixed(0)));
+        $("#total_semuar1_").val(formatRupiah(total_semua.toFixed(0)));
+
+        if (total_semua < 1) {
+            $("#btnSimpanr1_").attr("disabled", true);
+        } else {
+            $("#btnSimpanr1_").attr("disabled", false);
         }
     }
 </script>
